@@ -1,0 +1,8 @@
+prefix=/home/doblas/TFG/Projecto/marker_testing/devel
+
+Name: tuw_checkerboard
+Description: Description of tuw_checkerboard
+Version: 0.1.1
+Cflags: -I/home/doblas/TFG/Projecto/marker_testing/devel/include
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/doblas/TFG/Projecto/marker_testing/install
+
+Name: marker_msgs
+Description: Description of marker_msgs
+Version: 0.0.6
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs message_runtime std_msgs
