@@ -1,8 +1,0 @@
-prefix=/home/doblas/TFG/Projecto/marker_testing/devel
-
-Name: marker_rviz_plugin
-Description: Description of marker_rviz_plugin
-Version: 0.0.2
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
