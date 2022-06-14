@@ -7,11 +7,6 @@
 using namespace std;
 //ros::Publisher marker_pub;
 
-const double dx_camera = -0.006;
-const double dy_camera = -0.056;
-const double dz_camera = -0.984;
-const double rotation_camera = 0;
-
 class CameraReader 
 {
     public:
@@ -194,9 +189,22 @@ void CameraReader::callback(const marker_msgs::MarkerDetection& msg)
 
 int main( int argc, char** argv )
 {
+
+    
     ros::init(argc, argv, "release_camera");
     ros::NodeHandle n;
     ros::Rate r(1);   
+
+    double dx_camera = 0.0;
+    double dy_camera = 0.0;
+    double dz_camera = 0.0;
+    double rotation_camera = 0.0;
+
+    n.getParam("dx_camera", dx_camera);
+    n.getParam("dy_camera", dy_camera);
+    n.getParam("dz_camera", dz_camera);
+    n.getParam("rotation_camera", rotation_camera);
+
     CameraReader camera(n, dx_camera, dy_camera, dz_camera, rotation_camera);
 
     //marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
@@ -204,6 +212,6 @@ int main( int argc, char** argv )
     
     ros::spin();
     // while(ros::ok())
-    //     listener.send_marker();
+//     listener.send_marker();
     return 0;
 }

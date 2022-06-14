@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="device" default="0" />
+    <!-- <arg name="device" default="0" /> -->
     <arg name="device_cam_1" default="4" />
     <arg name="device_cam_2" default="3" />
     <arg name="camera_cfg" default="logitech.yaml" />
@@ -32,9 +32,15 @@
 
         <remap from="image" to="/camera1/image_raw"/>
         <remap from="camera_info" to="/camera1/camera_info"/>
-
         <remap from="markers" to="cam/1/tracker/markers"/>
     </node>
+
+    <node pkg="tuw_aruco" type="release_camera" name="cam_1" output="screen">
+        <param name="dx_camera" value="0.0"/>
+        <param name="dy_camera" value="0.0"/>
+        <param name="dz_camera" value="0.0"/>
+        <param name="rotation_camera" value="0.0"/>
+    </node>    
 
     <!-- <node pkg="cv_camera" type="cv_camera_node" name="camera2" output="screen">
         <param name="device_id" value="$(arg device_cam_2)"/>
