@@ -2,10 +2,12 @@
 #include "tuw_aruco/aruco_node.h"
 #include <vector>
 #include <cmath>
+#include <visualization_msgs/Marker.h>
+#include <geometry_msgs/PoseStamped.h>
 
 
 using namespace std;
-//ros::Publisher marker_pub;
+ros::Publisher marker_pub;
 
 class CameraReader 
 {
@@ -17,19 +19,21 @@ class CameraReader
         // double aruco_pose_position_x = 0;
         // double aruco_pose_position_y = 0;
         // double aruco_pose_position_z = 0;
-        // double aruco_pose_orientation_x = 0.0;
-        // double aruco_pose_orientation_y = 0.0;
-        // double aruco_pose_orientation_z = 0.0;
-        // double aruco_pose_orientation_w = 1.0;
 
         CameraReader(ros::NodeHandle node, double dx, double dy, double dz, double rotation = 0);
         void callback(const marker_msgs::MarkerDetection& msg);
-        //void send_marker();
+        void send_result();
 
     private:
         vector <double> aruco_camera_position;
         vector <double> aruco_world_position;
         unsigned num_markers_read = 0;
+
+        double aruco_pose_orientation_x = 0.0;
+        double aruco_pose_orientation_y = 0.0;
+        double aruco_pose_orientation_z = 0.0;
+        double aruco_pose_orientation_w = 1.0;
+
 
         
         vector<vector<double>> matrix;  
@@ -94,6 +98,45 @@ void CameraReader::calculate_world_position(){
 
 }
 
+void CameraReader::send_result(){
+    
+
+    visualization_msgs::Marker marker;
+    uint32_t shape = visualization_msgs::Marker::SPHERE;
+
+    marker.header.frame_id = "/my_frame";
+    marker.header.stamp = ros::Time::now();
+    marker.ns = "basic_shapes";
+    marker.id = 0;
+    marker.type = shape;
+    marker.lifetime = ros::Duration();
+
+
+    marker.action = visualization_msgs::Marker::ADD;
+
+    marker.pose.position.x = aruco_camera_position[0];
+    marker.pose.position.y = aruco_camera_position[1];
+    marker.pose.position.z = aruco_camera_position[2];
+    marker.pose.orientation.x = aruco_pose_orientation_x;
+    marker.pose.orientation.y = aruco_pose_orientation_y;
+    marker.pose.orientation.z = aruco_pose_orientation_z;
+    marker.pose.orientation.w = aruco_pose_orientation_w;
+
+    marker.scale.x = 1.0;
+    marker.scale.y = 1.0;
+    marker.scale.z = 1.0;
+
+    marker.color.r = 0.0f;
+    marker.color.g = 1.0f;
+    marker.color.b = 0.0f;
+    marker.color.a = 1.0;
+
+    marker_pub.publish(marker);
+}
+
+
+
+
 void CameraReader::callback(const marker_msgs::MarkerDetection& msg) 
 {
     std::cout << std::fixed;
@@ -130,59 +173,24 @@ void CameraReader::callback(const marker_msgs::MarkerDetection& msg)
 
     calculate_world_position();
 
-    //cout << endl;
-    cout << "POSICION WORLD:\n";
-    for (int i = 0; i< 3; i++){
-        cout << aruco_world_position[i] << "  ";
-    }
-    cout << endl;
+    if (num_markers_read > 0){
+        //cout << "POSICION CAMARA:\n";
+        cout << "POSICION WORLD:\n";
+        for (int i = 0; i< 3; i++){
+            cout << aruco_world_position[i] << "  ";
+        }
+        cout << endl;
 
-    // aruco_pose_position_x = msg.pose.position.x;
-    // aruco_pose_position_y = msg.pose.position.y;
-    // aruco_pose_position_z = msg.pose.position.z;
+    }
+    //No se que hacer
+
     // aruco_pose_orientation_x = msg.pose.orientation.x;
     // aruco_pose_orientation_y = msg.pose.orientation.y;
     // aruco_pose_orientation_z = msg.pose.orientation.z;
     // aruco_pose_orientation_w = msg.pose.orientation.w;
 
-    //send_marker();
+    send_result();
 }
-
-// void Listener::send_marker(){ //tring topic ="visualization_marker"
-    
-
-//     visualization_msgs::Marker marker;
-//     uint32_t shape = visualization_msgs::Marker::SPHERE;
-
-//     marker.header.frame_id = "/my_frame";
-//     marker.header.stamp = ros::Time::now();
-//     marker.ns = "basic_shapes";
-//     marker.id = 0;
-//     marker.type = shape;
-//     marker.lifetime = ros::Duration();
-
-
-//     marker.action = visualization_msgs::Marker::ADD;
-
-//     marker.pose.position.x = aruco_pose_position_x*20;
-//     marker.pose.position.y = aruco_pose_position_y*20;
-//     marker.pose.position.z = aruco_pose_position_z*20;
-//     marker.pose.orientation.x = aruco_pose_orientation_x*20;
-//     marker.pose.orientation.y = aruco_pose_orientation_y*20;
-//     marker.pose.orientation.z = aruco_pose_orientation_z*20;
-//     marker.pose.orientation.w = aruco_pose_orientation_w*20;
-
-//     marker.scale.x = 1.0;
-//     marker.scale.y = 1.0;
-//     marker.scale.z = 1.0;
-
-//     marker.color.r = 0.0f;
-//     marker.color.g = 1.0f;
-//     marker.color.b = 0.0f;
-//     marker.color.a = 1.0;
-
-//     marker_pub.publish(marker);
-// }
 
 
 
@@ -190,28 +198,36 @@ void CameraReader::callback(const marker_msgs::MarkerDetection& msg)
 int main( int argc, char** argv )
 {
 
-    
     ros::init(argc, argv, "release_camera");
     ros::NodeHandle n;
     ros::Rate r(1);   
 
+    string camera_id = ros::this_node::getName();
     double dx_camera = 0.0;
     double dy_camera = 0.0;
     double dz_camera = 0.0;
     double rotation_camera = 0.0;
 
-    n.getParam("dx_camera", dx_camera);
-    n.getParam("dy_camera", dy_camera);
-    n.getParam("dz_camera", dz_camera);
-    n.getParam("rotation_camera", rotation_camera);
+    n.getParam(camera_id + "/dx_camera", dx_camera);
+    n.getParam(camera_id + "/dy_camera", dy_camera);
+    n.getParam(camera_id + "/dz_camera", dz_camera);
+    n.getParam(camera_id + "/rotation_camera", rotation_camera);
+
+
+    //cout << "dx_cam: " <<  dx_camera << endl;
+    // cout << "dy_cam: " <<  dy_camera << endl;
+    // cout << "dz_cam: " <<  dz_camera << endl;
+    // cout << "rotation_cam: " <<  rotation_camera << endl;
 
     CameraReader camera(n, dx_camera, dy_camera, dz_camera, rotation_camera);
 
-    //marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-    ros::Subscriber sub = n.subscribe("/cam/1/tracker/markers", 1, &CameraReader::callback, &camera);
+    marker_pub = n.advertise<visualization_msgs::Marker>(camera_id + "/result", 1);
+    ros::Subscriber sub = n.subscribe(camera_id + "/tracker/markers", 1, &CameraReader::callback, &camera);
     
     ros::spin();
     // while(ros::ok())
 //     listener.send_marker();
     return 0;
 }
+
+

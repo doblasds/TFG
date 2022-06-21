@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="device" default="0" />
+    <!-- <arg name="device" default="0" /> -->
     <arg name="device_cam_1" default="4" />
     <arg name="device_cam_2" default="3" />
     <arg name="camera_cfg" default="logitech.yaml" />
     <arg name="width" default="1280" />
     <arg name="height" default="720" />
-
+    <arg name="marker_dictionary" default="ARUCO" />
+    <arg name="marker_size" default="0.04" />
 
     <node pkg="cv_camera" type="cv_camera_node" name="camera1" output="screen">
         <param name="device_id" value="$(arg device_cam_1)"/>
@@ -21,22 +22,29 @@
 
     <node pkg="tuw_aruco" type="aruco_node" name="tracker1" output="screen">
         <param name="show_debug_image" value="true"/>
-        <param name="marker_dictonary" value="ARUCO"/>
-        <param name="marker_size" value="0.04"/>
-
+        <param name="marker_dictonary" value="$(arg marker_dictionary)"/>
+        <param name="marker_size" value="$(arg marker_size)"/>
         <param name="publish_tf" value="true"/>
         <param name="publish_markers" value="true"/>
         <param name="publish_fiducials" value="true"/>
         <param name="pose_estimation_enabled" value="true"/>
-
-
         <remap from="image" to="/camera1/image_raw"/>
         <remap from="camera_info" to="/camera1/camera_info"/>
-
-        <remap from="markers" to="cam/1/tracker/markers"/>
+        <remap from="markers" to="cam_1/tracker/markers"/>
     </node>
 
-    <!-- <node pkg="cv_camera" type="cv_camera_node" name="camera2" output="screen">
+
+    <node pkg="tuw_aruco" type="release_camera" name="cam_1" output="screen">
+        <param name="dx_camera" value="1.0"/>
+        <param name="dy_camera" value="2.0"/>
+        <param name="dz_camera" value="3.0"/>
+        <param name="rotation_camera" value="0.0"/>
+    </node> 
+    
+<!-- args="-d $(find tuw_aruco)/launch/demo_single_marker_live.rviz" -->
+    
+
+    <node pkg="cv_camera" type="cv_camera_node" name="camera2" output="screen">
         <param name="device_id" value="$(arg device_cam_2)"/>
         <param name="camera_info_url" value="file://$(find tuw_aruco)/launch/cv_camera/$(arg camera_cfg)" />
         <param name="rescale_camera_info" value="true" />
@@ -48,30 +56,26 @@
 
     <node pkg="tuw_aruco" type="aruco_node" name="tracker2" output="screen">
         <param name="show_debug_image" value="true"/>
-
-        <param name="marker_dictonary" value="ARUCO"/>
-        <param name="marker_size" value="0.04"/>
-
+        <param name="marker_dictonary" value="$(arg marker_dictionary)"/>
+        <param name="marker_size" value="$(arg marker_size)"/>
         <param name="publish_tf" value="true"/>
         <param name="publish_markers" value="true"/>
         <param name="publish_fiducials" value="true"/>
         <param name="pose_estimation_enabled" value="true"/>
-
-
         <remap from="image" to="/camera2/image_raw"/>
         <remap from="camera_info" to="/camera2/camera_info"/>
+        <remap from="markers" to="cam_2/tracker/markers"/>
+    </node>
 
-        <remap from="markers" to="cam/2/tracker/markers"/>
-    </node> -->
-
-
-    <node pkg="tuw_aruco" type="release_camera" name="cam_1" output="screen">
-        <param name="dx_camera" value="0.0"/>
-        <param name="dy_camera" value="0.0"/>
-        <param name="dz_camera" value="0.0"/>
+    <node pkg="tuw_aruco" type="release_camera" name="cam_2" output="screen">
+        <param name="dx_camera" value="1.0"/>
+        <param name="dy_camera" value="2.0"/>
+        <param name="dz_camera" value="3.0"/>
         <param name="rotation_camera" value="0.0"/>
     </node> 
 
+
+    <!-- <node name="rviz" pkg="rviz" type="rviz" />  -->
 
 </launch>
 
