@@ -75,3 +75,7 @@ install(DIRECTORY launch/
 
 add_executable(release_camera src/release_camera.cpp)
 target_link_libraries(release_camera ${catkin_LIBRARIES})
+
+add_executable(reduce_cameras src/reduce_cameras.cpp)
+target_link_libraries(reduce_cameras ${catkin_LIBRARIES})
+

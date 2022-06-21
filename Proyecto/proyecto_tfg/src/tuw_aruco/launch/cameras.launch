@@ -2,8 +2,8 @@
 <launch>
 
     <!-- <arg name="device" default="0" /> -->
-    <arg name="device_cam_1" default="4" />
-    <arg name="device_cam_2" default="3" />
+    <arg name="device_cam_1" default="2" />
+    <arg name="device_cam_2" default="4" />
     <arg name="camera_cfg" default="logitech.yaml" />
     <arg name="width" default="1280" />
     <arg name="height" default="720" />
@@ -35,14 +35,12 @@
 
 
     <node pkg="tuw_aruco" type="release_camera" name="cam_1" output="screen">
-        <param name="dx_camera" value="1.0"/>
-        <param name="dy_camera" value="2.0"/>
-        <param name="dz_camera" value="3.0"/>
+        <param name="dx_camera" value="0.0"/>
+        <param name="dy_camera" value="0.0"/>
+        <param name="dz_camera" value="0.0"/>
         <param name="rotation_camera" value="0.0"/>
     </node> 
-    
-<!-- args="-d $(find tuw_aruco)/launch/demo_single_marker_live.rviz" -->
-    
+        
 
     <node pkg="cv_camera" type="cv_camera_node" name="camera2" output="screen">
         <param name="device_id" value="$(arg device_cam_2)"/>
@@ -69,13 +67,16 @@
 
     <node pkg="tuw_aruco" type="release_camera" name="cam_2" output="screen">
         <param name="dx_camera" value="1.0"/>
-        <param name="dy_camera" value="2.0"/>
-        <param name="dz_camera" value="3.0"/>
+        <param name="dy_camera" value="1.0"/>
+        <param name="dz_camera" value="1.0"/>
         <param name="rotation_camera" value="0.0"/>
     </node> 
 
+    <node pkg="tuw_aruco" type="reduce_cameras" name="reduction" output="screen"> </node>
+    
+    <node name="rviz" pkg="rviz" type="rviz" /> 
+    <!-- args="-d $(find tuw_aruco)/launch/demo_single_marker_live.rviz" -->
 
-    <!-- <node name="rviz" pkg="rviz" type="rviz" />  -->
 
 </launch>
 

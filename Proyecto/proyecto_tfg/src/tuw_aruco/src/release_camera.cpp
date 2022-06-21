@@ -2,7 +2,6 @@
 #include "tuw_aruco/aruco_node.h"
 #include <vector>
 #include <cmath>
-#include <visualization_msgs/Marker.h>
 #include <geometry_msgs/PoseStamped.h>
 
 
@@ -66,7 +65,6 @@ CameraReader::CameraReader(ros::NodeHandle node, double dx, double dy, double dz
 }
 
 void CameraReader::calculate_world_position(){
-    int i, k;
     aruco_world_position.clear();
     aruco_world_position[0] = 0;
     aruco_world_position[1] = 0;
@@ -88,9 +86,9 @@ void CameraReader::calculate_world_position(){
     // }
     // cout << endl;
 
-	for(i = 0; i < matrix.size(); ++i)
+	for(unsigned i = 0; i < matrix.size(); ++i)
 	{
-        for(k=0; k < matrix.size(); ++k)
+        for(unsigned k = 0; k < matrix.size(); ++k)
         {
             aruco_world_position[i] += matrix[i][k] * aruco_camera_position[k];
         }
@@ -99,39 +97,18 @@ void CameraReader::calculate_world_position(){
 }
 
 void CameraReader::send_result(){
-    
+    geometry_msgs::PoseStamped position;
 
-    visualization_msgs::Marker marker;
-    uint32_t shape = visualization_msgs::Marker::SPHERE;
+    position.pose.position.x = aruco_world_position[0];
+    position.pose.position.y = aruco_world_position[1];
+    position.pose.position.z = aruco_world_position[2];
 
-    marker.header.frame_id = "/my_frame";
-    marker.header.stamp = ros::Time::now();
-    marker.ns = "basic_shapes";
-    marker.id = 0;
-    marker.type = shape;
-    marker.lifetime = ros::Duration();
+    position.pose.orientation.x = aruco_pose_orientation_x;
+    position.pose.orientation.y = aruco_pose_orientation_y;
+    position.pose.orientation.z = aruco_pose_orientation_z;
+    position.pose.orientation.w = aruco_pose_orientation_w;
 
-
-    marker.action = visualization_msgs::Marker::ADD;
-
-    marker.pose.position.x = aruco_camera_position[0];
-    marker.pose.position.y = aruco_camera_position[1];
-    marker.pose.position.z = aruco_camera_position[2];
-    marker.pose.orientation.x = aruco_pose_orientation_x;
-    marker.pose.orientation.y = aruco_pose_orientation_y;
-    marker.pose.orientation.z = aruco_pose_orientation_z;
-    marker.pose.orientation.w = aruco_pose_orientation_w;
-
-    marker.scale.x = 1.0;
-    marker.scale.y = 1.0;
-    marker.scale.z = 1.0;
-
-    marker.color.r = 0.0f;
-    marker.color.g = 1.0f;
-    marker.color.b = 0.0f;
-    marker.color.a = 1.0;
-
-    marker_pub.publish(marker);
+    marker_pub.publish(position);
 }
 
 
@@ -150,38 +127,44 @@ void CameraReader::callback(const marker_msgs::MarkerDetection& msg)
     aruco_camera_position[3] = 1;
 
     for (auto &marker:msg.markers) {
-
-        cout << "ID MARKER:" << marker.ids.front() << endl;
+        //cout << "ID MARKER:" << marker.ids.front() << endl;
         
         aruco_camera_position[0] += marker.pose.position.x;
         aruco_camera_position[1] += marker.pose.position.y;
         aruco_camera_position[2] += marker.pose.position.z;
 
         num_markers_read++;
-
-
         // cout << "POSICION CAMARA:\n";
         // for (int i = 0; i< 3; i++){
         //     cout << aruco_camera_position[i] << "  ";
         // }
 
     }
-
-    aruco_camera_position[0] /= num_markers_read;
-    aruco_camera_position[1] /= num_markers_read;
-    aruco_camera_position[2] /= num_markers_read;
-
-    calculate_world_position();
-
     if (num_markers_read > 0){
-        //cout << "POSICION CAMARA:\n";
-        cout << "POSICION WORLD:\n";
-        for (int i = 0; i< 3; i++){
-            cout << aruco_world_position[i] << "  ";
-        }
-        cout << endl;
+        aruco_camera_position[0] /= num_markers_read;
+        aruco_camera_position[1] /= num_markers_read;
+        aruco_camera_position[2] /= num_markers_read;
 
+        calculate_world_position();
+    }else{
+        aruco_world_position[0] = -99.99;
     }
+
+
+    
+
+    // if (num_markers_read > 0){
+    //     //cout << "POSICION CAMARA:\n";
+    //     cout << "POSICION WORLD:\n";
+    //     for (int i = 0; i< 3; i++){
+    //         cout << aruco_world_position[i] << "  ";
+    //     }
+    //     cout << endl;
+
+    // }
+
+
+
     //No se que hacer
 
     // aruco_pose_orientation_x = msg.pose.orientation.x;
@@ -221,7 +204,7 @@ int main( int argc, char** argv )
 
     CameraReader camera(n, dx_camera, dy_camera, dz_camera, rotation_camera);
 
-    marker_pub = n.advertise<visualization_msgs::Marker>(camera_id + "/result", 1);
+    marker_pub = n.advertise<geometry_msgs::PoseStamped>(camera_id + "/result", 1);
     ros::Subscriber sub = n.subscribe(camera_id + "/tracker/markers", 1, &CameraReader::callback, &camera);
     
     ros::spin();
