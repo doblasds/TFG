@@ -74,7 +74,6 @@
 
     <node pkg="tuw_aruco" type="reduce_cameras" name="reduction" output="screen"> </node>
     
-    <!-- <node name="rviz" pkg="rviz" type="rviz" />  -->
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tuw_aruco)/launch/config.rviz"/>
 
 

@@ -1,0 +1,8 @@
+prefix=/home/doblas/TFG/Proyecto/proyecto_nuevo/devel
+
+Name: image_publisher
+Description: Description of image_publisher
+Version: 1.15.1
+Cflags: -I/home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include
+Libs: -L${prefix}/lib 
+Requires: 
