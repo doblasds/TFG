@@ -485,6 +485,8 @@ actionlib_msgs_DIR:PATH=/opt/ros/melodic/share/actionlib_msgs/cmake
 //Value Computed by CMake
 aruco_detect_BINARY_DIR:STATIC=/home/doblas/TFG/Proyecto/proyecto_nuevo/build/fiducials/aruco_detect
 
+aruco_detect_DIR:PATH=
+
 //Value Computed by CMake
 aruco_detect_SOURCE_DIR:STATIC=/home/doblas/TFG/Proyecto/proyecto_nuevo/src/fiducials/aruco_detect
 
@@ -775,7 +777,15 @@ tf2_ros_DIR:PATH=/opt/ros/melodic/share/tf2_ros/cmake
 tf_DIR:PATH=/opt/ros/melodic/share/tf/cmake
 
 //Value Computed by CMake
+uav_positioning_BINARY_DIR:STATIC=/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning
+
+//Value Computed by CMake
+uav_positioning_SOURCE_DIR:STATIC=/home/doblas/TFG/Proyecto/proyecto_nuevo/src/uav_positioning
+
+//Value Computed by CMake
 usb_cam_BINARY_DIR:STATIC=/home/doblas/TFG/Proyecto/proyecto_nuevo/build/usb_cam
+
+usb_cam_DIR:PATH=
 
 //Dependencies for the target
 usb_cam_LIB_DEPENDS:STATIC=general;avcodec;general;swscale;general;/opt/ros/melodic/lib/libimage_transport.so;general;/opt/ros/melodic/lib/libmessage_filters.so;general;/opt/ros/melodic/lib/libclass_loader.so;general;/usr/lib/libPocoFoundation.so;general;/usr/lib/x86_64-linux-gnu/libdl.so;general;/opt/ros/melodic/lib/libroslib.so;general;/opt/ros/melodic/lib/librospack.so;general;/usr/lib/x86_64-linux-gnu/libpython2.7.so;general;/usr/lib/x86_64-linux-gnu/libboost_program_options.so;general;/usr/lib/x86_64-linux-gnu/libtinyxml2.so;general;/opt/ros/melodic/lib/libcamera_info_manager.so;general;/opt/ros/melodic/lib/libcamera_calibration_parsers.so;general;/opt/ros/melodic/lib/libroscpp.so;general;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/opt/ros/melodic/lib/librosconsole.so;general;/opt/ros/melodic/lib/librosconsole_log4cxx.so;general;/opt/ros/melodic/lib/librosconsole_backend_interface.so;general;/usr/lib/x86_64-linux-gnu/liblog4cxx.so;general;/usr/lib/x86_64-linux-gnu/libboost_regex.so;general;/opt/ros/melodic/lib/libxmlrpcpp.so;general;/opt/ros/melodic/lib/libroscpp_serialization.so;general;/opt/ros/melodic/lib/librostime.so;general;/opt/ros/melodic/lib/libcpp_common.so;general;/usr/lib/x86_64-linux-gnu/libboost_system.so;general;/usr/lib/x86_64-linux-gnu/libboost_thread.so;general;/usr/lib/x86_64-linux-gnu/libboost_chrono.so;general;/usr/lib/x86_64-linux-gnu/libboost_date_time.so;general;/usr/lib/x86_64-linux-gnu/libboost_atomic.so;general;/usr/lib/x86_64-linux-gnu/libpthread.so;general;/usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4;
@@ -936,7 +946,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=20
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=21
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

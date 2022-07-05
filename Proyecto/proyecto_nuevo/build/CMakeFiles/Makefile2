@@ -6458,6 +6458,24 @@ clean: usb_cam/CMakeFiles/usb_cam.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Directory level rules for directory uav_positioning
+
+# Convenience name for "all" pass in the directory.
+uav_positioning/all:
+
+.PHONY : uav_positioning/all
+
+# Convenience name for "clean" pass in the directory.
+uav_positioning/clean:
+
+.PHONY : uav_positioning/clean
+
+# Convenience name for "preinstall" pass in the directory.
+uav_positioning/preinstall:
+
+.PHONY : uav_positioning/preinstall
+
+#=============================================================================
 # Directory level rules for directory vision_msgs-melodic-devel
 
 # Convenience name for "all" pass in the directory.

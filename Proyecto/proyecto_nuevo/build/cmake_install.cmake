@@ -143,6 +143,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/doblas/TFG/Proyecto/proyecto_nuevo/build/fiducials/fiducial_slam/cmake_install.cmake")
   include("/home/doblas/TFG/Proyecto/proyecto_nuevo/build/image_pipeline-melodic/image_rotate/cmake_install.cmake")
   include("/home/doblas/TFG/Proyecto/proyecto_nuevo/build/usb_cam/cmake_install.cmake")
+  include("/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/cmake_install.cmake")
   include("/home/doblas/TFG/Proyecto/proyecto_nuevo/build/vision_msgs-melodic-devel/cmake_install.cmake")
   include("/home/doblas/TFG/Proyecto/proyecto_nuevo/build/fiducials/aruco_detect/cmake_install.cmake")
 
