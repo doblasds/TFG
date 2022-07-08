@@ -4,14 +4,14 @@ camera_name: logitech
 camera_matrix:
   rows: 3
   cols: 3
-  data: [ 1471.35613,     0.     ,   635.03414,
-             0.     ,  1476.13893,   393.09396,
+  data: [ 904.013741,     0.     ,   255.922864,
+             0.     ,  895.956681,   225.639583,
              0.     ,     0.     ,     1.     ]
 distortion_model: plumb_bob
 distortion_coefficients:
   rows: 1
   cols: 5
-  data: [0.129552, -0.034951, 0.006881, -0.011389, 0.000000]
+  data: [0.187201, 0.070111, -0.003204, -0.038769, 0.000000]
 rectification_matrix:
   rows: 3
   cols: 3
@@ -21,6 +21,6 @@ rectification_matrix:
 projection_matrix:
   rows: 3
   cols: 4
-  data: [ 1514.89075,     0.     ,   625.92422,     0.     ,
-             0.     ,  1529.56921,   396.04488,     0.     ,
+  data: [ 925.444824,     0.     ,   245.246147,     0.     ,
+             0.     ,  938.194946,   225.243100,     0.     ,
              0.     ,     0.     ,     1.     ,     0.     ]

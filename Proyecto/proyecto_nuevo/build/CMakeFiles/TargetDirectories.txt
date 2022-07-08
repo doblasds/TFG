@@ -295,10 +295,11 @@
 /home/doblas/TFG/Proyecto/proyecto_nuevo/build/usb_cam/CMakeFiles/edit_cache.dir
 /home/doblas/TFG/Proyecto/proyecto_nuevo/build/usb_cam/CMakeFiles/rebuild_cache.dir
 /home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/install/strip.dir
-/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/edit_cache.dir
-/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/list_install_components.dir
-/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/test.dir
 /home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/install/local.dir
+/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/test.dir
+/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/list_install_components.dir
+/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/camera_node.dir
+/home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/edit_cache.dir
 /home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/rebuild_cache.dir
 /home/doblas/TFG/Proyecto/proyecto_nuevo/build/uav_positioning/CMakeFiles/install.dir
 /home/doblas/TFG/Proyecto/proyecto_nuevo/build/vision_msgs-melodic-devel/CMakeFiles/install/strip.dir

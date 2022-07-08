@@ -3,10 +3,6 @@
 
 fiducials/aruco_detect/CMakeFiles/marker.dir/src/marker.cpp.o
  /home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include/aruco_detect/DetectorParamsConfig.h
- /home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include/fiducial_msgs/Fiducial.h
- /home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include/fiducial_msgs/FiducialArray.h
- /home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include/fiducial_msgs/FiducialTransform.h
- /home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include/fiducial_msgs/FiducialTransformArray.h
  /home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include/vision_msgs/BoundingBox2D.h
  /home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include/vision_msgs/Detection2D.h
  /home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include/vision_msgs/Detection2DArray.h

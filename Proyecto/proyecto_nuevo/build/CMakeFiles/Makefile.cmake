@@ -589,6 +589,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "image_pipeline-melodic/image_rotate/CMakeFiles/image_rotate_exe.dir/DependInfo.cmake"
   "usb_cam/CMakeFiles/usb_cam_node.dir/DependInfo.cmake"
   "usb_cam/CMakeFiles/usb_cam.dir/DependInfo.cmake"
+  "uav_positioning/CMakeFiles/camera_node.dir/DependInfo.cmake"
   "vision_msgs-melodic-devel/CMakeFiles/vision_msgs_genpy.dir/DependInfo.cmake"
   "vision_msgs-melodic-devel/CMakeFiles/vision_msgs_generate_messages_py.dir/DependInfo.cmake"
   "vision_msgs-melodic-devel/CMakeFiles/vision_msgs_gennodejs.dir/DependInfo.cmake"

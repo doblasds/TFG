@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  fiducial_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -119,6 +120,10 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
+
+add_executable(camera_node src/camera_node.cpp)
+target_link_libraries(camera_node ${catkin_LIBRARIES})
+
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
