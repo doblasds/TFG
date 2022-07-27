@@ -2469,6 +2469,19 @@ usb_cam/fast:
 .PHONY : usb_cam/fast
 
 #=============================================================================
+# Target rules for targets named camera_test
+
+# Build rule for target.
+camera_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 camera_test
+.PHONY : camera_test
+
+# fast build rule for target.
+camera_test/fast:
+	$(MAKE) -f uav_positioning/CMakeFiles/camera_test.dir/build.make uav_positioning/CMakeFiles/camera_test.dir/build
+.PHONY : camera_test/fast
+
+#=============================================================================
 # Target rules for targets named camera_node
 
 # Build rule for target.
@@ -2480,6 +2493,19 @@ camera_node: cmake_check_build_system
 camera_node/fast:
 	$(MAKE) -f uav_positioning/CMakeFiles/camera_node.dir/build.make uav_positioning/CMakeFiles/camera_node.dir/build
 .PHONY : camera_node/fast
+
+#=============================================================================
+# Target rules for targets named reduce_cameras
+
+# Build rule for target.
+reduce_cameras: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 reduce_cameras
+.PHONY : reduce_cameras
+
+# fast build rule for target.
+reduce_cameras/fast:
+	$(MAKE) -f uav_positioning/CMakeFiles/reduce_cameras.dir/build.make uav_positioning/CMakeFiles/reduce_cameras.dir/build
+.PHONY : reduce_cameras/fast
 
 #=============================================================================
 # Target rules for targets named vision_msgs_genpy
@@ -3204,7 +3230,9 @@ help:
 	@echo "... image_rotate_exe"
 	@echo "... usb_cam_node"
 	@echo "... usb_cam"
+	@echo "... camera_test"
 	@echo "... camera_node"
+	@echo "... reduce_cameras"
 	@echo "... vision_msgs_genpy"
 	@echo "... vision_msgs_generate_messages_py"
 	@echo "... vision_msgs_gennodejs"

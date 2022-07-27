@@ -3,6 +3,9 @@
         "iostream": "cpp",
         "unordered_map": "cpp",
         "unordered_set": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "ostream": "cpp",
+        "string": "cpp",
+        "iosfwd": "cpp"
     }
 }

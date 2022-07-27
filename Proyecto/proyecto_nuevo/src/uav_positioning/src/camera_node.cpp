@@ -38,6 +38,8 @@
 #include <boost/shared_ptr.hpp>
 
 
+
+
 using namespace std;
 using namespace cv;
 
@@ -61,7 +63,15 @@ class Camera
         geometry_msgs::Pose fiducial_world_pose;
 
         vector <Point3d> fiducial_trans_to_center; // TRANSLATION VECTOR OF MARKERS FROM THE CENTER
-        vector <float> fiducial_rot_to_ref; // YAX AXIS, IN RADS 
+
+        //vector <float> fiducial_rot_to_ref; // YAX AXIS, IN RADS 
+
+        vector <Point3d> fiducial_rot_to_ref; //EVERY POINT REPRESENT AXIS ROLL, PITCH, YAW OF THE MARKER
+        
+        //vector <tf2Scalar> fiducial_rot_to_ref; // YAX AXIS, IN RADS 
+        // roll, pitch, yaw;
+        // tf2::Quaternion fiducial_rotation;
+
         vector <double> fiducial_camera_orientation_buff = {0, 0, 0, 0};
 
     public:
@@ -76,7 +86,7 @@ class Camera
 Camera::Camera(ros::NodeHandle node, double dx, double dy, double dz, double rotation){
     n = node;
 
-    fiducial_camera_pose.position.x = 0.0;
+    fiducial_camera_pose.position.x = -99.99;
     fiducial_camera_pose.position.y = 0.0;
     fiducial_camera_pose.position.z = 0.0;
 
@@ -93,10 +103,12 @@ Camera::Camera(ros::NodeHandle node, double dx, double dy, double dz, double rot
     fiducial_trans_to_center[1] = Point3d(0, 0, -0.025f);  //FIDUCIAL 1 
     fiducial_trans_to_center[2] = Point3d(0, 0, -0.025f);  //FIDUCIAL 2
 
-    fiducial_rot_to_ref[0] = 1.884956;    
-    fiducial_rot_to_ref[1] = 0;           
-    fiducial_rot_to_ref[2] = -1.884956;  
+    fiducial_rot_to_ref[0] = Point3d(0, 0, 1.884956);   //FIDUCIAL 0 
+    fiducial_rot_to_ref[1] = Point3d(0, 0, 0);          //FIDUCIAL 1  
+    fiducial_rot_to_ref[2] = Point3d(0, 0, -1.884956);  //FIDUCIAL 2
 
+    // fiducial_rotation.setRPY(roll, pitch, yaw);
+    
     translation_matrix.resize(4);
 
     translation_matrix[0] = {cos(M_PI * rotation),    -sin(M_PI * rotation),    0.0f,           dx};
@@ -155,12 +167,11 @@ void Camera::calculate_world_position(){
 
 void Camera::callback(const fiducial_msgs::FiducialTransformArray& msg) 
 {
-    float factor = 3.0;
     unsigned num_fiducials_read = msg.transforms.size();
     geometry_msgs::Pose pose_cache = fiducial_camera_pose;
     unsigned failed_fiducials = 0;
     
-    fiducial_camera_pose.position.x = 0.0;
+    fiducial_camera_pose.position.x = -99.99;
     fiducial_camera_pose.position.y = 0.0;
     fiducial_camera_pose.position.z = 0.0;
 
@@ -174,9 +185,10 @@ void Camera::callback(const fiducial_msgs::FiducialTransformArray& msg)
         
         Point3d translation = fiducial_trans_to_center[marker.fiducial_id];
 
-        fiducial_camera_pose.position.x += (marker.transform.translation.x + translation.x) * factor;
-        fiducial_camera_pose.position.y += (marker.transform.translation.z + translation.y) * factor;
-        fiducial_camera_pose.position.z += (-marker.transform.translation.y + translation.z) * factor;
+        fiducial_camera_pose.position.x = 0;
+        fiducial_camera_pose.position.x += (marker.transform.translation.x + translation.x);
+        fiducial_camera_pose.position.y += (marker.transform.translation.z + translation.y);
+        fiducial_camera_pose.position.z += (-marker.transform.translation.y + translation.z);
 
         //cout << "ROT: x: " << marker.transform.rotation.x << " y: " << marker.transform.rotation.y << " z: " << marker.transform.rotation.z << " w: " << marker.transform.rotation.w << endl;
         float x,y,z,w;
@@ -194,10 +206,10 @@ void Camera::callback(const fiducial_msgs::FiducialTransformArray& msg)
                 fiducial_camera_orientation_buff[3] = w;
                 break;
             case 1:
-                fiducial_camera_orientation_buff[0] = -y; // X
-                fiducial_camera_orientation_buff[1] = x; // Y
-                fiducial_camera_orientation_buff[2] = z; // Z
-                fiducial_camera_orientation_buff[3] = w; // W
+                fiducial_camera_orientation_buff[0] = -y; 
+                fiducial_camera_orientation_buff[1] = x; 
+                fiducial_camera_orientation_buff[2] = z;
+                fiducial_camera_orientation_buff[3] = w; 
                 break;
             case 2:
                 fiducial_camera_orientation_buff[0] = y;
@@ -209,12 +221,11 @@ void Camera::callback(const fiducial_msgs::FiducialTransformArray& msg)
         }
 
         tf2::Quaternion q_orig (fiducial_camera_orientation_buff[0], fiducial_camera_orientation_buff[1], fiducial_camera_orientation_buff[2], fiducial_camera_orientation_buff[3]);
-        
         tf2::Quaternion q_rot, q_result;
 
         tf2Scalar roll = 0;
         tf2Scalar pitch = 0;
-        tf2Scalar yaw = fiducial_rot_to_ref[marker.fiducial_id]; //M_PI_2;
+        tf2Scalar yaw = fiducial_rot_to_ref[marker.fiducial_id].z; //M_PI_2;
 
         q_rot.setRPY(roll, pitch, yaw);
         // q_orig.normalize();
@@ -225,10 +236,12 @@ void Camera::callback(const fiducial_msgs::FiducialTransformArray& msg)
         // cout << "FIDUCIAL_CAMERA_ORIENTATION marker_id: " << marker.fiducial_id << endl << "x: " << q_result.x() << " y: " << q_result.y() << " z: " << q_result.z() << " w: " << q_result.w() << endl; 
 
         
-        bool caca = pose_cache.orientation.x == 0.0 && pose_cache.orientation.y == 0.0 && pose_cache.orientation.z == 0.0 && pose_cache.orientation.w == 0.0;
+        bool started = pose_cache.orientation.x != 0.0 || pose_cache.orientation.y != 0.0 || pose_cache.orientation.z != 0.0 || pose_cache.orientation.w != 0.0;
         //CALCULO DEL ERROR DEL MARCADOR EN CIERTAS OCASIONES
-        bool error = abs( pose_cache.orientation.x - q_result.getX() ) > 0.8 || abs( pose_cache.orientation.y - q_result.getY() ) > 0.8 || abs( pose_cache.orientation.z - q_result.getZ() ) > 0.8 || abs( pose_cache.orientation.w - q_result.getW() ) > 0.8;
-        if ( error > 0.8 && !caca ) {
+        float threshold = 0.8; 
+        bool error = abs( pose_cache.orientation.x - q_result.getX() ) > threshold || abs( pose_cache.orientation.y - q_result.getY() ) > threshold || abs( pose_cache.orientation.z - q_result.getZ() ) > threshold || abs( pose_cache.orientation.w - q_result.getW() ) > threshold;
+        bool founds = pose_cache.position.x != 99.99;
+        if ( error && started && founds ) {
             failed_fiducials++;
             cout << "FAILED";
         } else {
@@ -271,11 +284,6 @@ void Camera::callback(const fiducial_msgs::FiducialTransformArray& msg)
                 average_pose.position.y += pose.position.y;
                 average_pose.position.z += pose.position.z;
 
-                
-                // if (abs(average_pose.orientation.x - pose.orientation.x) > 0.8) {
-                //     cout << "tontito";
-                //     //average_pose.orientation.x = pose.orientation.x;
-                // } 
                 average_pose.orientation.x += pose.orientation.x;
                 average_pose.orientation.y += pose.orientation.y;
                 average_pose.orientation.z += pose.orientation.z;
@@ -292,71 +300,31 @@ void Camera::callback(const fiducial_msgs::FiducialTransformArray& msg)
 
             fiducial_camera_pose = average_pose;
             pose_buffer.clear();
-
-            send_marker();  
         }
-
-
-        //send_marker();
-
-        //calculate_world_position
     }else{
-        // fiducial_camera_pose.position.x = -99.99;
-        // fiducial_camera_pose.orientation.x = -99.99;
+        fiducial_camera_pose.position.x = -99.99;
     }
 
-
-     //send marker to rviz
-
-
-
-
+    send_marker();
 }
 
 void Camera::send_marker(){ 
     
+    geometry_msgs::PoseStamped position_msg;
+    position_msg.header.frame_id = "world";
+    position_msg.header.stamp = ros::Time::now();
 
-
-    visualization_msgs::Marker marker;
-    uint32_t shape = visualization_msgs::Marker::ARROW;
-
-    marker.header.frame_id = "/world";
-    marker.header.stamp = ros::Time::now();
-    marker.ns = "basic_shapes";
-    marker.id = 0;
-    marker.type = shape;
-    marker.lifetime = ros::Duration();
-
-    marker.action = visualization_msgs::Marker::ADD;
-
-    marker.pose.position.x = fiducial_camera_pose.position.x;
-    marker.pose.position.y = fiducial_camera_pose.position.y;
-    marker.pose.position.z = fiducial_camera_pose.position.z;
-
-    marker.pose.orientation.x = fiducial_camera_pose.orientation.x;
-    marker.pose.orientation.y = fiducial_camera_pose.orientation.y;
-    marker.pose.orientation.z = fiducial_camera_pose.orientation.z;
-    marker.pose.orientation.w = fiducial_camera_pose.orientation.w;
-
-    marker.scale.x = 2.0;
-    marker.scale.y = 1.0;
-    marker.scale.z = 0.5;
-
-    // marker.scale.x = 0.5;
-    // marker.scale.y = 0.5;
-    // marker.scale.z = 0.5;
-
-    marker.color.r = 1.0f;
-    marker.color.g = 0.0f;
-    marker.color.b = 0.0f;
-    marker.color.a = 1.0f;
-
-    //CALCULATE WORLD POSITION
-
-    marker_pub.publish(marker);
+    //HAY QUE CAMBIAR A WORLD POSITION
+    position_msg.pose.position.x = fiducial_camera_pose.position.x;
+    position_msg.pose.position.y = fiducial_camera_pose.position.y;
+    position_msg.pose.position.z = fiducial_camera_pose.position.z;
+    position_msg.pose.orientation.x = fiducial_camera_pose.orientation.x;
+    position_msg.pose.orientation.y = fiducial_camera_pose.orientation.y;
+    position_msg.pose.orientation.z = fiducial_camera_pose.orientation.z;
+    position_msg.pose.orientation.w = fiducial_camera_pose.orientation.w;
+    
+    marker_pub.publish(position_msg);
 }
-
-
 
 
 int main( int argc, char** argv )
@@ -364,32 +332,44 @@ int main( int argc, char** argv )
     ros::init(argc, argv, "camera_node");
     ros::NodeHandle n;
 
-    // ros::Rate r(1);   
+    ros::Rate r(30);   
 
     std::cout << std::fixed;
     std::cout << std::setprecision(2);
 
 
     string node_name = ros::this_node::getName();
+    std::string ns = ros::this_node::getNamespace();
+
+    cout << "NODE NAME: " << node_name << endl;
+    cout << "NAMESPACE: " << ns << endl;
+
+    string cam;
     double dx_camera = 0.0;
     double dy_camera = 0.0;
     double dz_camera = 0.0;
     double rotation_camera = 0.0;
+    double roll, pitch, yaw;
+    roll = pitch = yaw = 0;
 
     n.getParam(node_name + "/num_fiducials", num_fiducials);
     n.getParam(node_name + "/dx_camera", dx_camera);
     n.getParam(node_name + "/dy_camera", dy_camera);
     n.getParam(node_name + "/dz_camera", dz_camera);
+
+    //ROTACION CAMARA
     n.getParam(node_name + "/rotation_camera", rotation_camera);
+
+    n.getParam(node_name + "/roll", roll);
+    n.getParam(node_name + "/pitch", pitch);
+    n.getParam(node_name + "/yaw", yaw);
+
 
     Camera camera(n, dx_camera, dy_camera, dz_camera, rotation_camera);
 
-    //Publisher definivo
-    // marker_pub = n.advertise<geometry_msgs::PoseStamped>(node_name + "/result", 1);
-
-
-    marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-    ros::Subscriber sub = n.subscribe("/fiducial_transforms", 1, &Camera::callback, &camera);
+    marker_pub = n.advertise<geometry_msgs::PoseStamped>(node_name + "/pose", 1);
+    ros::Subscriber sub = n.subscribe(ns + "/fiducial_transforms", 1, &Camera::callback, &camera);
+    
     
     ros::spin();
 
