@@ -1,8 +1,0 @@
-prefix=/home/doblas/TFG/Proyecto/proyecto_nuevo/devel
-
-Name: vision_msgs
-Description: Description of vision_msgs
-Version: 0.0.1
-Cflags: -I/home/doblas/TFG/Proyecto/proyecto_nuevo/devel/include
-Libs: -L${prefix}/lib 
-Requires: message_runtime std_msgs sensor_msgs geometry_msgs
