@@ -2,7 +2,7 @@ prefix=/home/doblas/TFG/Proyecto/project/devel
 
 Name: camera_calibration
 Description: Description of camera_calibration
-Version: 1.16.0
+Version: 1.15.1
 Cflags: 
 Libs: -L${prefix}/lib 
 Requires: 

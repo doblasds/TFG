@@ -2,7 +2,7 @@ prefix=/home/doblas/TFG/Proyecto/project/devel
 
 Name: image_view
 Description: Description of image_view
-Version: 1.16.0
+Version: 1.15.1
 Cflags: -I/home/doblas/TFG/Proyecto/project/devel/include
 Libs: -L${prefix}/lib 
 Requires: dynamic_reconfigure

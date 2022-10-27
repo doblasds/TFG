@@ -1,0 +1,8 @@
+prefix=/home/doblas/TFG/Proyecto/code/install
+
+Name: uav_positioning
+Description: Description of uav_positioning
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

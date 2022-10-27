@@ -44,8 +44,8 @@ void callback(const geometry_msgs::PoseStamped::ConstPtr& msg_cam1, \
     }
     else
     {
-        // cout << "msg 1: x: " << msg_cam1->pose.position.x << " y: " << msg_cam1->pose.position.y << " z: " << msg_cam1->pose.position.x << endl;
-        // cout << "msg 2: x: " << msg_cam2->pose.position.x << " y: " << msg_cam2->pose.position.y << " z: " << msg_cam2->pose.position.x << endl;
+        cout << "msg 1: x: " << msg_cam1->pose.position.x << " y: " << msg_cam1->pose.position.y << " z: " << msg_cam1->pose.position.z << endl;
+        cout << "msg 2: x: " << msg_cam2->pose.position.x << " y: " << msg_cam2->pose.position.y << " z: " << msg_cam2->pose.position.z << endl;
         
         
         result.position.x = ((msg_cam1->pose.position.x + msg_cam2->pose.position.x) / 2);
@@ -103,7 +103,7 @@ void callback(const geometry_msgs::PoseStamped::ConstPtr& msg_cam1, \
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "reduce_cameras");
-    ros::NodeHandle nh;
+    ros::NodeHandle n;
     ros::Rate r(30);   
 
     string node_name = ros::this_node::getName();
@@ -112,11 +112,11 @@ int main(int argc, char** argv)
     std::cout << std::setprecision(2);
 
     message_filters::Subscriber<geometry_msgs::PoseStamped> \
-    cam1_sub(nh, "/cam_1/camera_node/pose", 1);
+    cam1_sub(n, "/cam_1/camera/pose", 1);
     message_filters::Subscriber<geometry_msgs::PoseStamped> \
-    cam2_sub(nh, "/cam_1/camera_node/pose", 1);
+    cam2_sub(n, "/cam_2/camera/pose", 1);
 
-    marker_pub = nh.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+    marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
 
     typedef sync_policies::ApproximateTime \
     <geometry_msgs::PoseStamped, geometry_msgs::PoseStamped> MySyncPolicy;

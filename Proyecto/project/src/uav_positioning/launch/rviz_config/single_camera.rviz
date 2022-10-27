@@ -58,7 +58,7 @@ Visualization Manager:
       Marker Topic: /cam/visualization_marker
       Name: Marker
       Namespaces:
-        {}
+        basic_shapes: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -89,25 +89,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10
+      Distance: 0.5505832433700562
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
-      Focal Shape Fixed Size: true
+        X: -0.15414634346961975
+        Y: 2.475560188293457
+        Z: 0.3201642632484436
+      Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.785398006439209
+      Pitch: 0.27539852261543274
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.785398006439209
+      Yaw: 1.5053943395614624
     Saved: ~
 Window Geometry:
   Displays:
@@ -126,4 +126,4 @@ Window Geometry:
     collapsed: false
   Width: 1267
   X: 428
-  Y: 113
+  Y: 0

@@ -1,76 +1,39 @@
 <launch>
     <!-- SET DEVICE ID FOR CAMERAS/ -->
-    <arg name="device_cam_1" default="2"/>
-    <arg name="device_cam_2" default="0"/>
+    <arg name="device_cam_1" default="/dev/video2"/>
+    <arg name="device_cam_2" default="/dev/video4"/>
 
     <!-- SET NAMESPACE FOR CAMERA INPUT -->
-    <!-- <arg name="camera_1" default="logitech" />
-    <arg name="camera_2" default="camera" /> -->
+    <arg name="camera_1" default="logitech" />
+    <arg name="camera_2" default="logitech" />
 
     <!-- SET CALIBRATION FILES FOR EVERY CAMERA IN usb_cam/calibration_files/ -->
     <arg name="camera_1_cfg" default="logitech.yaml"/>
-    <arg name="camera_2_cfg" default="webcam.yaml"/>
+    <arg name="camera_2_cfg" default="logitech.yaml"/>
 
     <arg name="fiducial_len" default="0.05"/>
     <arg name="dictionary" default="ARUCO_MIP_36h12"/>
     <!-- RESOLUTION OF CAMERAS -->
     <arg name="width" default="1280"/>
-    <arg name="height" default="960"/>
+    <arg name="height" default="720"/>
     
     <!-- SET THE NUMBERS OF FIDUCIALS PLACED IN THE UAV,
     MUST BE CONFIGURED IN camera_node.cpp -->
-    <arg name="num_fiducials" default="3"/>
+    <arg name="num_fiducials" default="5"/>
 
 
     <group ns="cam_1">
 
-        <node pkg="cv_camera" type="cv_camera_node" name="cv_camera" output="screen">
-            <!-- <param name="device_id" value="$(arg device_cam_1)"/>
+        <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
+            <param name="video_device" value="$(arg device_cam_1)" />
             <param name="camera_info_url" value="file://$(find uav_positioning)/cfg/$(arg camera_1_cfg)" />
-            <param name="rescale_camera_info" value="true" /> -->
-            <param name="image_width" value="$(arg width)"/>
-            <param name="image_height" value="$(arg height)"/>
-            <remap from="/cv_camera/image_raw" to="/cam_1/image_raw"/>
-            <remap from="/cv_camera/camera_info" to="/cam_1/camera_info"/>
+            <param name="camera_name" value="$(arg camera_1)" />
+            <param name="image_width" value="$(arg width)" />
+            <param name="image_height" value="$(arg height)" />
+            <param name="pixel_format" value="mjpeg" />
+            <param name="camera_frame_id" value="usb_cam" />
+            <param name="io_method" value="mmap"/>
         </node>
-
-
-        <!-- <node pkg="tuw_aruco" type="aruco_node" name="aruco" output="screen">
-            <param name="show_debug_image" value="true"/>
-            <param name="marker_dictonary" value="$(arg dictionary)"/>
-            <param name="marker_size" value="$(arg fiducial_len)"/>
-            <param name="publish_tf" value="true"/>
-            <param name="publish_markers" value="true"/>
-            <param name="publish_fiducials" value="true"/>
-            <param name="pose_estimation_enabled" value="true"/>
-            <remap from="image" to="/cam_1/cv_camera/image_raw"/>
-            <remap from="camera_info" to="/cam_1/cv_camera/camera_info"/>
-            <remap from="markers" to="aruco/markers"/>
-        </node>
-
-        <node pkg="uav_positioning" type="camera_node" name="camera_node" output="screen">
-            <param name="num_fiducials" value="$(arg num_fiducials)" />
-            <param name="dx_camera" value="0.0"/>
-            <param name="dy_camera" value="0.0"/>
-            <param name="dz_camera" value="0.0"/>
-            <param name="rotation_camera" value="0"/>
-        </node>  -->
-
-    </group>
-
-
-    <!-- <group ns="cam_2">
-
-        <node pkg="cv_camera" type="cv_camera_node" name="cv_camera" output="screen">
-            <param name="device_id" value="$(arg device_cam_2)"/>
-            <param name="camera_info_url" value="file://$(find uav_positioning)/cfg/$(arg camera_2_cfg)" />
-            <param name="rescale_camera_info" value="true" />
-            <param name="image_width" value="$(arg width)"/>
-            <param name="image_height" value="$(arg height)"/>
-            <remap from="/cv_camera/image_raw" to="/cam_2/image_raw"/>
-            <remap from="/cv_camera/camera_info" to="/cam_2/camera_info"/>
-        </node>
-
 
         <node pkg="tuw_aruco" type="aruco_node" name="aruco" output="screen">
             <param name="show_debug_image" value="true"/>
@@ -78,32 +41,70 @@
             <param name="marker_size" value="0.05"/>
             <param name="publish_tf" value="true"/>
             <param name="publish_markers" value="true"/>
-            <param name="publish_fiducials" value="true"/>
+            <param name="publish_fiducials" value="true"/> 
             <param name="pose_estimation_enabled" value="true"/>
-            <remap from="image" to="/cam_2/cv_camera/image_raw"/>
-            <remap from="camera_info" to="/cam_2/cv_camera/camera_info"/>
-            <remap from="markers" to="aruco/markers"/>
+            <remap from="image" to="/cam_1/usb_cam/image_raw"/>
+            <remap from="camera_info" to="/cam_1/usb_cam/camera_info"/>
         </node>
 
-         <node pkg="uav_positioning" type="camera_node" name="camera_node" output="screen">
+        <node pkg="uav_positioning" type="camera_node" name="camera" output="screen">
             <param name="num_fiducials" value="$(arg num_fiducials)" />
-            <param name="dx_camera" value="0.0"/>
+            <!-- <param name="dx_camera" value="0.0"/>
             <param name="dy_camera" value="0.0"/>
-            <param name="dz_camera" value="0.0"/>
-            <param name="rotation_camera" value="0.0"/>
-        </node>  
+            <param name="dz_camera" value="0.0"/> -->
+            <param name="dx_camera" value="-0.58"/>
+            <param name="dy_camera" value="0.19"/>
+            <param name="dz_camera" value="0.00"/>
+            <param name="rotation_camera" value="-90.0"/>        
+        </node> 
 
-    </group> -->
+    </group>
+
+
+    <group ns="cam_2">
+
+        <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
+            <param name="video_device" value="$(arg device_cam_2)" />
+            <param name="camera_info_url" value="file://$(find uav_positioning)/cfg/$(arg camera_2_cfg)" />
+            <param name="camera_name" value="$(arg camera_2)" />
+            <param name="image_width" value="$(arg width)" />
+            <param name="image_height" value="$(arg height)" />
+            <param name="pixel_format" value="mjpeg" />
+            <param name="camera_frame_id" value="usb_cam" />
+            <param name="io_method" value="mmap"/>
+        </node>
+
+        <node pkg="tuw_aruco" type="aruco_node" name="aruco" output="screen">
+            <param name="show_debug_image" value="true"/>
+            <param name="marker_dictonary" value="ARUCO_MIP_36h12"/>
+            <param name="marker_size" value="0.05"/>
+            <param name="publish_tf" value="true"/>
+            <param name="publish_markers" value="true"/>
+            <param name="publish_fiducials" value="true"/> 
+            <param name="pose_estimation_enabled" value="true"/>
+            <remap from="image" to="/cam_2/usb_cam/image_raw"/>
+            <remap from="camera_info" to="/cam_2/usb_cam/camera_info"/>
+        </node>
+
+        <node pkg="uav_positioning" type="camera_node" name="camera" output="screen">
+            <param name="num_fiducials" value="$(arg num_fiducials)" />
+            <param name="dx_camera" value="0.51"/>
+            <param name="dy_camera" value="0.15"/>
+            <param name="dz_camera" value="0.0"/>
+            <param name="rotation_camera" value="90.0"/>        
+        </node> 
+
+    </group>
 
 
 
 
     <!-- N... CAMERAS -->
-<!-- 
-    <node pkg="uav_positioning" type="reduce_cameras" name="reduction" output="screen"> 
-    </node> -->
+
+    <node pkg="uav_positioning" type="reduce_cameras" name="reduction_node" output="screen"> 
+    </node>
 
     <!-- REPRESENTATION OF THE UAV IN THE SPACE -->
-    <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find uav_positioning)/launch/rviz/config.rviz"/> -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find uav_positioning)/launch/rviz_config/system.rviz"/>
 
 </launch>

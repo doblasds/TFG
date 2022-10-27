@@ -1,0 +1,73 @@
+<!-- Run the aruco_detect node -->
+<launch>
+    <!-- SET NAMESPACE FOR CAMERA INPUT -->
+    <arg name="camera" default="logitech" />
+
+    <!-- SET DEVICE ID FOR CAMERAS/ -->
+    <arg name="device_cam" default="2"/>
+
+    <!-- SET CALIBRATION FILES FOR EVERY CAMERA IN usb_cam/calibration_files/ -->
+    <arg name="camera_cfg" default="logitech_480.yaml"/>
+
+    <arg name="image" default="image_raw" />
+    <arg name="transport" default="compressed" />
+    <arg name="do_pose_estimation" default="true"/>
+    <!-- If vis_msgs set to true, pose estimation will be published with ROS standard vision_msgs -->
+    <arg name="vis_msgs" default="false"/>
+    <arg name="ignore_fiducials" default=""/>
+    <arg name="fiducial_len_override" default=""/>
+    <arg name="verbose" default="false"/>
+
+    <arg name="fiducial_len" default="0.055"/>
+    <arg name="dictionary" default="0"/>
+
+    <arg name="width" default="640"/>
+    <arg name="height" default="480"/>
+    
+    <group ns="cam">
+
+        <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen" >
+            <param name="video_device" value="/dev/video$(arg device_cam)"/>
+            <param name="image_width" value="$(arg width)"/>
+            <param name="image_height" value="$(arg height)"/>
+            <param name="pixel_format" value="yuyv"/>
+            <param name="camera_frame_id" value="usb_cam"/>
+            <param name="io_method" value="mmap"/>
+            <param name="camera_info_url" value="file://$(find usb_cam)/calibration_files/$(arg camera_cfg)"/>
+            <param name="camera_name" value="$(arg camera)"/>        
+        </node>
+
+        <node pkg="aruco_detect" type="aruco_detect" name="aruco_detect" output="screen" respawn="false">
+            <param name="image_transport" value="$(arg transport)"/>
+            <param name="publish_images" value="true" />
+            <param name="fiducial_len" value="$(arg fiducial_len)"/>
+            <param name="dictionary" value="$(arg dictionary)"/>
+            <param name="do_pose_estimation" value="$(arg do_pose_estimation)"/>
+            <param name="vis_msgs" value="$(arg vis_msgs)"/>
+            <param name="ignore_fiducials" value="$(arg ignore_fiducials)"/>
+            <param name="fiducial_len_override" value="$(arg fiducial_len_override)"/>
+            <param name="verbose" value="$(arg verbose)"/>
+
+            <!-- <remap from="fiducial_transforms" to="/$(arg camera_1)_detection"/> -->
+            <remap from="camera/compressed" 
+                to="/cam/usb_cam/$(arg image)/$(arg transport)"/>
+
+            <remap from="camera_info" to="/cam/usb_cam/camera_info"/>
+            <remap from="/fiducial_images" to="/cam/fiducial_images"/>
+
+        </node>
+
+        <!-- NODE TO VISUALIZE THE FIDUCIALS DETECTED -->
+        <node pkg="image_view" type="image_view" name="image_view" respawn="false" output="screen">
+            <remap from="image" to="/cam/fiducial_images"/>
+            <param name="autosize" value="true"/>
+        </node>
+
+        <node pkg="uav_positioning" type="camera_node_v1" name="camera_node" output="screen"></node> 
+
+    </group>
+
+    <!-- REPRESENTATION OF THE UAV IN THE SPACE -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find uav_positioning)/launch/single_config.rviz"/>
+
+</launch>

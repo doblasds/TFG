@@ -2,7 +2,7 @@ prefix=/home/doblas/TFG/Proyecto/project/devel
 
 Name: stereo_image_proc
 Description: Description of stereo_image_proc
-Version: 1.16.0
-Cflags: -I/home/doblas/TFG/Proyecto/project/devel/include -I/home/doblas/TFG/Proyecto/project/src/image_pipeline/stereo_image_proc/include
+Version: 1.15.1
+Cflags: -I/home/doblas/TFG/Proyecto/project/devel/include -I/home/doblas/TFG/Proyecto/project/src/image_pipeline-melodic/stereo_image_proc/include
 Libs: -L${prefix}/lib -lstereo_image_proc
 Requires: image_geometry image_proc sensor_msgs stereo_msgs
