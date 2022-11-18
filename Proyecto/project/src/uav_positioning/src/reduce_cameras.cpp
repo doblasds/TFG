@@ -20,14 +20,11 @@ void callback(const geometry_msgs::PoseStamped::ConstPtr& msg_cam1, \
               //N
 {
     geometry_msgs::Pose result;
-    //double factor = 1.0;    
+    double factor = 2.5;    
 
     bool found = true;
     bool found_cam1 = msg_cam1->pose.position.x != -99.99;
     bool found_cam2 = msg_cam2->pose.position.x != -99.99;
-
-    // bool found_cam1 = msg_cam1 != nullptr;
-    // bool found_cam2 = msg_cam2 != nullptr;
 
 
     if ( !found_cam1 && !found_cam2 )
@@ -36,42 +33,47 @@ void callback(const geometry_msgs::PoseStamped::ConstPtr& msg_cam1, \
     }
     else if (found_cam1 && !found_cam2)
     {
+        // cout << "msg 1: x: " << msg_cam1->pose.position.x << " y: " << msg_cam1->pose.position.y << " z: " << msg_cam1->pose.position.z << endl;
         result = msg_cam1->pose;
     }
     else if (!found_cam1 && found_cam2)
     {
+        // cout << "msg 2: x: " << msg_cam2->pose.position.x << " y: " << msg_cam2->pose.position.y << " z: " << msg_cam2->pose.position.z << endl;
         result = msg_cam2->pose;
     }
     else
     {
-        cout << "msg 1: x: " << msg_cam1->pose.position.x << " y: " << msg_cam1->pose.position.y << " z: " << msg_cam1->pose.position.z << endl;
-        cout << "msg 2: x: " << msg_cam2->pose.position.x << " y: " << msg_cam2->pose.position.y << " z: " << msg_cam2->pose.position.z << endl;
-        
+        // cout << "msg 1: x: " << msg_cam1->pose.position.x << " y: " << msg_cam1->pose.position.y << " z: " << msg_cam1->pose.position.z << endl;
+        // cout << "msg 2: x: " << msg_cam2->pose.position.x << " y: " << msg_cam2->pose.position.y << " z: " << msg_cam2->pose.position.z << endl;
         
         result.position.x = ((msg_cam1->pose.position.x + msg_cam2->pose.position.x) / 2);
         result.position.y = ((msg_cam1->pose.position.y + msg_cam2->pose.position.y) / 2);
         result.position.z = ((msg_cam1->pose.position.z + msg_cam2->pose.position.z) / 2);
     
-        // result.orientation.x = ((msg_cam1->pose.orientation.x + msg_cam2->pose.orientation.x) / 2);
-        // result.orientation.y = ((msg_cam1->pose.orientation.y + msg_cam2->pose.orientation.y) / 2);
-        // result.orientation.z = ((msg_cam1->pose.orientation.z + msg_cam2->pose.orientation.z) / 2);
-        result.orientation.x =  msg_cam2->pose.orientation.x;
-        result.orientation.y =  msg_cam2->pose.orientation.y;
-        result.orientation.z =  msg_cam2->pose.orientation.z;
-        result.orientation.w =  msg_cam2->pose.orientation.w;
-
-        cout << "msg 1: x: " << msg_cam1->pose.orientation.x << " y: " << msg_cam1->pose.orientation.y << " z: " << msg_cam1->pose.orientation.x << " w: " << msg_cam1->pose.orientation.w << endl;
-        cout << "msg 2: x: " << msg_cam2->pose.orientation.x << " y: " << msg_cam2->pose.orientation.y << " z: " << msg_cam2->pose.orientation.x << " w: " << msg_cam2->pose.orientation.w <<  endl;
+        tf2::Quaternion q1 (msg_cam1->pose.orientation.x, msg_cam1->pose.orientation.y, \
+        msg_cam1->pose.orientation.z, msg_cam1->pose.orientation.w);
+        tf2::Quaternion q2 (msg_cam2->pose.orientation.x, msg_cam2->pose.orientation.y, \
+        msg_cam2->pose.orientation.z, msg_cam2->pose.orientation.w);
+        tf2::Quaternion q_result;
+        q_result = q1.slerp(q2, 0.5);
 
 
-        // result.orientation.x = msg_cam2->pose.orientation.x;
-        // result.orientation.y = msg_cam2->pose.orientation.y;
-        // result.orientation.z = msg_cam2->pose.orientation.z;
-        // result.orientation.w = msg_cam2->pose.orientation.w;
+        result.orientation.x = q_result.getX();
+        result.orientation.y = q_result.getY();
+        result.orientation.z = q_result.getZ();
+        result.orientation.w = q_result.getW();
 
+        // cout << "msg 1: x: " << msg_cam1->pose.orientation.x << " y: " << msg_cam1->pose.orientation.y << " z: " << msg_cam1->pose.orientation.z << " w: " << msg_cam1->pose.orientation.w << endl;
+        // cout << "msg 2: x: " << msg_cam2->pose.orientation.x << " y: " << msg_cam2->pose.orientation.y << " z: " << msg_cam2->pose.orientation.z << " w: " << msg_cam2->pose.orientation.w <<  endl;
     }
 
     if (found){
+
+        result.position.x *= factor;
+        result.position.y *= factor;
+        result.position.z *= factor;
+
+
 
         visualization_msgs::Marker marker;
         uint32_t shape = visualization_msgs::Marker::ARROW;
