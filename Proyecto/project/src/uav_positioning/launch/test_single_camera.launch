@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-	<arg name="device" default="/dev/video4" />
+	<arg name="device" default="/dev/video2" />
     <arg name="camera_cfg" default="logitech.yaml" />
     <arg name="camera_name" default="logitech" />
     <arg name="num_fiducials" default="5"/>
@@ -36,7 +36,7 @@
             <param name="dx_camera" value="0.0"/>
             <param name="dy_camera" value="0.0"/>
             <param name="dz_camera" value="0.0"/>
-            <param name="rotation_camera" value="180.0"/>        
+            <param name="rotation_camera" value="0.0"/>        
         </node> 
 
     </group>

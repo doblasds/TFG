@@ -6,6 +6,9 @@
         "complex": "cpp",
         "ostream": "cpp",
         "string": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "functional": "cpp",
+        "deque": "cpp",
+        "vector": "cpp"
     }
 }

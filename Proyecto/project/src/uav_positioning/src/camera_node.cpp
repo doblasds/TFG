@@ -56,11 +56,17 @@ CameraNode::CameraNode(ros::NodeHandle node, unsigned num_fiducials, double dx, 
     fiducial_trans_to_center.resize(num_fiducials);
     fiducial_rot_to_ref.resize(num_fiducials);
 
-    fiducial_trans_to_center[0] = Point3d(0, 0, -0.25f);  //FIDUCIAL 0 
-    fiducial_trans_to_center[1] = Point3d(0, 0, -0.25f);  //FIDUCIAL 1 
-    fiducial_trans_to_center[2] = Point3d(0, 0, -0.25f);  //FIDUCIAL 2
-    fiducial_trans_to_center[3] = Point3d(0, 0, -0.25f);  //FIDUCIAL 3
-    fiducial_trans_to_center[4] = Point3d(0, 0, -0.25f);  //FIDUCIAL 4
+    // fiducial_trans_to_center[0] = Point3d(0, 0, -0.25f);  //FIDUCIAL 0 
+    // fiducial_trans_to_center[1] = Point3d(0, 0, -0.25f);  //FIDUCIAL 1 
+    // fiducial_trans_to_center[2] = Point3d(0, 0, -0.25f);  //FIDUCIAL 2
+    // fiducial_trans_to_center[3] = Point3d(0, 0, -0.25f);  //FIDUCIAL 3
+    // fiducial_trans_to_center[4] = Point3d(0, 0, -0.25f);  //FIDUCIAL 4
+
+    fiducial_trans_to_center[0] = Point3d(0, 0, -0.9f);  //FIDUCIAL 0 
+    fiducial_trans_to_center[1] = Point3d(0, 0, -0.9f);  //FIDUCIAL 1 
+    fiducial_trans_to_center[2] = Point3d(0, 0, -0.9f);  //FIDUCIAL 2
+    fiducial_trans_to_center[3] = Point3d(0, 0, -0.9f);  //FIDUCIAL 3
+    fiducial_trans_to_center[4] = Point3d(0, 0, -0.9f);  //FIDUCIAL 4
 
     fiducial_rot_to_ref[0] = Point3d(0, 0, 0);          //FIDUCIAL 0 CARA FRONTAL
     fiducial_rot_to_ref[1] = Point3d(0, 0, -M_PI/2);    //FIDUCIAL 1 CARA DERECHA
@@ -72,15 +78,15 @@ CameraNode::CameraNode(ros::NodeHandle node, unsigned num_fiducials, double dx, 
     double rot_to_rads = (M_PI * rotation) / 180;
 
     //CORRECIÓN DE ROT
-    for (int i = 0; i < num_fiducials; i++) {
+    for (int i = 0; i < num_fiducials; i++) {                                       
         fiducial_rot_to_ref[i].z -= (-M_PI/2 ) - rot_to_rads ; //
     }
     
     matrix.resize(4);
-    matrix[0] = {cos(rot_to_rads), -sin(rot_to_rads),    0.0f,    dx};
-    matrix[1] = {sin(rot_to_rads), cos(rot_to_rads),     0.0f,    dy};
-    matrix[2] = {0.0f,                 0.0f,                     1.0f,    dz};
-    matrix[3] = {0.0f,                 0.0f,                     0.0f,    1.0f};
+    matrix[0] = {cos(rot_to_rads),      -sin(rot_to_rads),          0.0f,    dx};
+    matrix[1] = {sin(rot_to_rads),      cos(rot_to_rads),           0.0f,    dy};
+    matrix[2] = {0.0f,                  0.0f,                       1.0f,    dz};
+    matrix[3] = {0.0f,                  0.0f,                       0.0f,    1.0f};
 
 
 }
@@ -89,7 +95,9 @@ void CameraNode::callback(const marker_msgs::MarkerDetection& msg)
 {
     unsigned num_fiducials_read = msg.markers.size();
     geometry_msgs::Pose pose_cache = fiducial_camera_pose;
-    
+    vector<tf2::Quaternion> quaternions;
+    tf2::Quaternion q_result;
+
     fiducial_camera_pose.position.x = -99.99;
     fiducial_camera_pose.position.y = 0.0;
     fiducial_camera_pose.position.z = 0.0;
@@ -118,7 +126,7 @@ void CameraNode::callback(const marker_msgs::MarkerDetection& msg)
         load_fiducial_orientation_buff(marker.ids.front(), x, y, z, w);
 
         tf2::Quaternion q_orig (fiducial_orientation_buff[0], fiducial_orientation_buff[1], fiducial_orientation_buff[2], fiducial_orientation_buff[3]);
-        tf2::Quaternion q_rot, q_result;
+        tf2::Quaternion q_rot;
 
         tf2Scalar roll = fiducial_rot_to_ref[marker.ids.front()].x;
         tf2Scalar pitch = fiducial_rot_to_ref[marker.ids.front()].y;
@@ -129,11 +137,7 @@ void CameraNode::callback(const marker_msgs::MarkerDetection& msg)
         q_result.normalize();
         
         // cout << "RESULTADO ORIENTACION MARKER: " <<  marker.ids.front() << ", RADS:" << q_result.getAngle() << endl;
-
-        fiducial_camera_pose.orientation.x = q_result.getX();
-        fiducial_camera_pose.orientation.y = q_result.getY();
-        fiducial_camera_pose.orientation.z = q_result.getZ();
-        fiducial_camera_pose.orientation.w = q_result.getW();
+        quaternions.push_back(q_result);
     }
 
     if (num_fiducials_read > 0) {
@@ -141,10 +145,19 @@ void CameraNode::callback(const marker_msgs::MarkerDetection& msg)
         fiducial_camera_pose.position.y /= num_fiducials_read;
         fiducial_camera_pose.position.z /= num_fiducials_read;
 
-        fiducial_camera_pose.orientation.x /= num_fiducials_read;
-        fiducial_camera_pose.orientation.y /= num_fiducials_read;
-        fiducial_camera_pose.orientation.z /= num_fiducials_read;
-        fiducial_camera_pose.orientation.w /= num_fiducials_read;
+
+        if (num_fiducials_read >= 2 ){
+            for (unsigned i=1; i < num_fiducials_read; i++){
+                tf2::Quaternion q1 (q_result);
+                tf2::Quaternion q2 (quaternions[i]);
+                q_result = q1.slerp(q2, 0.5);
+            }
+        }
+
+        fiducial_camera_pose.orientation.x = q_result.getX();
+        fiducial_camera_pose.orientation.y = q_result.getY();
+        fiducial_camera_pose.orientation.z = q_result.getZ();
+        fiducial_camera_pose.orientation.w = q_result.getW();
     }
 
 

@@ -4,4 +4,6 @@ proyecto_nuevo/build/
 proyecto_nuevo/devel/
 project/build/
 project/devel/
+code/build/
+code/devel/
 *.vscode/
